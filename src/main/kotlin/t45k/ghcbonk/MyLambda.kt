@@ -11,7 +11,7 @@ class MyLambda : RequestHandler<Unit, String> {
     override fun handleRequest(input: Unit, context: Context?): String {
         return try {
             val properties = Properties()
-            properties.load(this.javaClass.getResourceAsStream("/resources/test.properties"))
+            properties.load(this.javaClass.getResourceAsStream("/resources/resource.properties"))
             val userName: String = properties.getProperty("userName")
             val user = GitHubUser(userName)
             val contributionData: ContributionData = user.fetchContributionData()
