@@ -42,6 +42,3 @@ bin
 *.log
 *.swp
 *.bak
-
-# resource.properties
-src/main/kotlin/t45k/ghcbonk/resource/resource.properties
