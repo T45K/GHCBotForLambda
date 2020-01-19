@@ -26,7 +26,7 @@ class Tweeter(properties: Properties) {
 
     private fun getContents(data: ContributionData): String =
             """
-            |${data.date}のコントリビューション数: ${data.numOfYesterdayContribution}
+            |${data.date}のコントリビューション数: ${data.numOfDayContribution}
             |連続コントリビューション日数: ${data.numOfContinuousContribution}
             |https://github.com/${data.userName}
             """.trimMargin()

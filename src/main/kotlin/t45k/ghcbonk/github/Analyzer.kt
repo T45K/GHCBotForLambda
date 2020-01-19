@@ -3,11 +3,16 @@ package t45k.ghcbonk.github
 fun analyzeRawData(rawData: List<String>, userName: String): ContributionData {
     var counter = 0
 
-    for (oneDayActivity: String in rawData) {
+    for (oneDayActivity: String in rawData.reversed()) {
         val elements: List<String> = oneDayActivity.split(Regex("\\s+"))
         val numOfContributionOfTheDay: String = getStringInDoubleQuote(elements[8])
 
-        counter = if (numOfContributionOfTheDay == "0") 0 else counter + 1
+        if (numOfContributionOfTheDay == "0") {
+            counter = 0
+            break
+        }
+
+        counter++
     }
 
     val lastActivity: List<String> = rawData[rawData.size - 1].split(Regex("\\s+"))
