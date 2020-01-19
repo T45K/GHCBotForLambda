@@ -5,7 +5,6 @@
 build
 
 # Ignore Gradle build output directory
-build
 
 # Java
 *.class
@@ -29,7 +28,6 @@ Thumbs.db
 .DS_Store
 
 # Gradle
-.gradle
 !build.gradle
 !gradle-wrapper.jar
 
@@ -38,7 +36,6 @@ target
 
 # Build
 out
-build
 bin
 
 # Other

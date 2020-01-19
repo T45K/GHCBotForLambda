@@ -6,10 +6,6 @@ import java.io.InputStreamReader
 import java.io.Reader
 import java.net.HttpURLConnection
 import java.net.URL
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 import kotlin.streams.toList
 
 class GitHubUser(private val userName: String) {
@@ -17,17 +13,7 @@ class GitHubUser(private val userName: String) {
         private const val USER_URL_PREFIX = "https://github.com/"
     }
 
-    private val userURL: URL
-    private val today: String
-
-    init {
-        this.userURL = URL(USER_URL_PREFIX + userName)
-
-        val date = Date()
-        val calendar: Calendar = Calendar.getInstance()
-        calendar.time = date
-        today = SimpleDateFormat("yyyy-MM-dd", Locale.JAPAN).format(calendar.time)
-    }
+    private val userURL = URL(USER_URL_PREFIX + userName)
 
     fun fetchContributionData(): ContributionData {
         val connection: HttpURLConnection = setConnection()
@@ -63,6 +49,6 @@ class GitHubUser(private val userName: String) {
     }
 
     private fun isNecessaryInformation(line: String): Boolean {
-        return line.contains("<rect") && !line.contains(today)
+        return line.contains("<rect")
     }
 }
