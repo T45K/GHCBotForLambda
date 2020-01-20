@@ -8,7 +8,6 @@ fun analyzeRawData(rawData: List<String>, userName: String): ContributionData {
         val numOfContributionOfTheDay: String = getStringInDoubleQuote(elements[8])
 
         if (numOfContributionOfTheDay == "0") {
-            counter = 0
             break
         }
 
