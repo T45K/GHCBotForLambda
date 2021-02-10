@@ -5,7 +5,7 @@ fun analyzeRawData(rawData: List<String>, userName: String): ContributionData {
 
     for (oneDayActivity: String in rawData.reversed()) {
         val elements: List<String> = oneDayActivity.split(Regex("\\s+"))
-        val numOfContributionOfTheDay: String = getStringInDoubleQuote(elements[8])
+        val numOfContributionOfTheDay: String = getStringInDoubleQuote(elements[9])
 
         if (numOfContributionOfTheDay == "0") {
             break
@@ -14,9 +14,9 @@ fun analyzeRawData(rawData: List<String>, userName: String): ContributionData {
         counter++
     }
 
-    val lastActivity: List<String> = rawData[rawData.size - 1].split(Regex("\\s+"))
-    val namOfContribution: String = getStringInDoubleQuote(lastActivity[8])
-    val date: String = getStringInDoubleQuote(lastActivity[9])
+    val lastActivity: List<String> = rawData.last().split(Regex("\\s+"))
+    val namOfContribution: String = getStringInDoubleQuote(lastActivity[9])
+    val date: String = getStringInDoubleQuote(lastActivity[10])
 
     return ContributionData(userName, date, namOfContribution, counter)
 }
