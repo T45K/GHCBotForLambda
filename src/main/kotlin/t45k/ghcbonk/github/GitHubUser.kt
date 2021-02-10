@@ -18,7 +18,7 @@ class GitHubUser(private val userName: String) {
     fun fetchContributionData(): ContributionData {
         val connection: HttpURLConnection = setConnection()
         val rawData: List<String> = fetchHTMLSource(connection)
-
+        println(rawData)
         return analyzeRawData(rawData, userName)
     }
 
@@ -44,8 +44,9 @@ class GitHubUser(private val userName: String) {
         val inputStreamReader = InputStreamReader(inputStream)
         val bufferedReader = BufferedReader(inputStreamReader as Reader)
         return bufferedReader.lines()
-                .filter { isNecessaryInformation(it) }
-                .toList()
+            .filter { isNecessaryInformation(it) }
+            .filter { it.split(Regex("\\s+")).size > 8 }
+            .toList()
     }
 
     private fun isNecessaryInformation(line: String): Boolean {
