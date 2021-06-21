@@ -2,27 +2,31 @@ package t45k.ghcbonk
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
-import t45k.ghcbonk.github.ContributionData
 import t45k.ghcbonk.github.GitHubUser
-import t45k.ghcbonk.twitter.Tweeter
-import java.io.InputStream
-import java.net.URL
-import java.util.Properties
+import t45k.ghcbonk.github.analyzeDocument
+import t45k.ghcbonk.twitter.TweetModel
+import t45k.ghcbonk.twitter.TwitterClient
 import java.util.ResourceBundle
 
 class MyLambda : RequestHandler<Unit, String> {
-    override fun handleRequest(input: Unit, context: Context?): String {
-        return try {
-            val propertyBundle: ResourceBundle = ResourceBundle.getBundle("info")
-            val userName: String = propertyBundle.getString("userName")
-            val user = GitHubUser(userName)
-            val contributionData: ContributionData = user.fetchContributionData()
-            val tweeter = Tweeter(propertyBundle)
-            tweeter.tweet(contributionData)
+    override fun handleRequest(input: Unit, context: Context?): String =
+        try {
+            val property: ResourceBundle = ResourceBundle.getBundle("info")
+            val githubUserName = property.getString("userName")
+            val (lastContributionCount, contributionStreak) = GitHubUser(githubUserName)
+                .fetchGitHubUserPage()
+                .let(::analyzeDocument)
+
+            val tweet = TweetModel(githubUserName, lastContributionCount, contributionStreak)
+            TwitterClient(
+                property.getString("apiKey"),
+                property.getString("apiSecret"),
+                property.getString("token"),
+                property.getString("tokenSecret")
+            ).tweet(tweet.getContent())
 
             "success"
         } catch (e: Exception) {
             e.toString()
         }
-    }
 }
