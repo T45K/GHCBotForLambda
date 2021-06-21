@@ -1,4 +1,4 @@
-package t45k.ghcbonk.twitter
+package io.github.t45k.ghcbonk.twitter
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

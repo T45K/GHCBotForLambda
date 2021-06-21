@@ -1,11 +1,11 @@
-package t45k.ghcbonk
+package io.github.t45k.ghcbonk
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
-import t45k.ghcbonk.github.GitHubUser
-import t45k.ghcbonk.github.analyzeDocument
-import t45k.ghcbonk.twitter.TweetModel
-import t45k.ghcbonk.twitter.TwitterClient
+import io.github.t45k.ghcbonk.github.GitHubUser
+import io.github.t45k.ghcbonk.github.analyzeDocument
+import io.github.t45k.ghcbonk.twitter.TweetModel
+import io.github.t45k.ghcbonk.twitter.TwitterClient
 import java.util.ResourceBundle
 
 class MyLambda : RequestHandler<Unit, String> {

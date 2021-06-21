@@ -1,4 +1,4 @@
-package t45k.ghcbonk.twitter
+package io.github.t45k.ghcbonk.twitter
 
 import twitter4j.Twitter
 import twitter4j.TwitterFactory

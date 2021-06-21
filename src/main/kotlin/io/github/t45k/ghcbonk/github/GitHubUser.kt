@@ -1,4 +1,4 @@
-package t45k.ghcbonk.github
+package io.github.t45k.ghcbonk.github
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
