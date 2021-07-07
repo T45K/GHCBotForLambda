@@ -1,4 +1,4 @@
-package io.github.t45k.ghcbonk.mixin
+package io.github.t45k.ghcbonk.util
 
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets

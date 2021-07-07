@@ -1,13 +1,10 @@
 package io.github.t45k.ghcbonk.twitter.parameter
 
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
+import io.github.t45k.ghcbonk.util.StringMixin
 
-abstract class Parameter(private val value: String) {
+abstract class Parameter(private val value: String) : StringMixin {
     fun toSignatureBaseString() = "${key()}=${value.percentEncode()}"
     fun toHeaderString() = "${key()}=\"${value.percentEncode()}\""
 
     abstract fun key(): String
-
-    private fun String.percentEncode() = URLEncoder.encode(this, StandardCharsets.UTF_8).replace("+", "%20")
 }

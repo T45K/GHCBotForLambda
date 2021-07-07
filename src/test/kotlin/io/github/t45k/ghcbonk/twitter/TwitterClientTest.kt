@@ -13,6 +13,8 @@ internal class TwitterClientTest {
             property.getString("apiSecret"),
             property.getString("token"),
             property.getString("tokenSecret")
-        ).tweet("Hello world via Twitter API")
+        )
+            .tweet("Hello world via Twitter API")
+            .let(::println)
     }
 }

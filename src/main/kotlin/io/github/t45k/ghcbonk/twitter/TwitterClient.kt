@@ -9,6 +9,7 @@ import io.github.t45k.ghcbonk.twitter.parameter.Status
 import io.github.t45k.ghcbonk.twitter.parameter.Timestamp
 import io.github.t45k.ghcbonk.twitter.parameter.Token
 import io.github.t45k.ghcbonk.twitter.parameter.Version
+import io.github.t45k.ghcbonk.util.Constants
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -21,9 +22,6 @@ class TwitterClient(
     private val token: String,
     private val tokenSecret: String
 ) {
-    companion object {
-        const val API_URL_BASE = "https://api.twitter.com/1.1/statuses/update.json"
-    }
 
     fun tweet(content: String): Response {
         val consumerKey = ConsumerKey(apiKey)
@@ -46,7 +44,7 @@ class TwitterClient(
                 version
             ).let(::Signature)
 
-        val httpUrl = API_URL_BASE.toHttpUrl().newBuilder()
+        val httpUrl = Constants.API_URL_BASE.toHttpUrl().newBuilder()
             .addEncodedQueryParameter("status", content)
             .addEncodedQueryParameter("include_entities", true.toString())
             .build()
@@ -62,13 +60,12 @@ class TwitterClient(
                 version
             ).joinToString(", ") { it.toHeaderString() }
 
-        val request = Request.Builder()
+        return Request.Builder()
             .url(httpUrl)
             .header("Authorization", header)
             .post(EMPTY_REQUEST)
             .build()
-
-        return OkHttpClient().newCall(request)
+            .let(OkHttpClient()::newCall)
             .execute()
     }
 }
