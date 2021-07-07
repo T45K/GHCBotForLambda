@@ -1,20 +1,71 @@
 package io.github.t45k.ghcbonk.twitter
 
-import twitter4j.Twitter
-import twitter4j.TwitterFactory
-import twitter4j.auth.AccessToken
+import io.github.t45k.ghcbonk.twitter.parameter.ConsumerKey
+import io.github.t45k.ghcbonk.twitter.parameter.IncludeEntities
+import io.github.t45k.ghcbonk.twitter.parameter.Nonce
+import io.github.t45k.ghcbonk.twitter.parameter.Signature
+import io.github.t45k.ghcbonk.twitter.parameter.SignatureMethod
+import io.github.t45k.ghcbonk.twitter.parameter.Status
+import io.github.t45k.ghcbonk.twitter.parameter.Timestamp
+import io.github.t45k.ghcbonk.twitter.parameter.Token
+import io.github.t45k.ghcbonk.twitter.parameter.Version
+import io.github.t45k.ghcbonk.util.Constants
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.internal.EMPTY_REQUEST
 
 class TwitterClient(
-    apiKey: String,
-    apiSecret: String,
-    token: String,
-    tokenSecret: String
+    private val apiKey: String,
+    private val apiSecret: String,
+    private val token: String,
+    private val tokenSecret: String
 ) {
-    private val twitter: Twitter = TwitterFactory().instance
-        .also { it.setOAuthConsumer(apiKey, apiSecret) }
-        .also { it.oAuthAccessToken = AccessToken(token, tokenSecret) }
 
-    fun tweet(content: String) {
-        this.twitter.updateStatus(content)
+    fun tweet(content: String): Response {
+        val consumerKey = ConsumerKey(apiKey)
+        val includeEntities = IncludeEntities()
+        val nonce = Nonce()
+        val signatureMethod = SignatureMethod()
+        val status = Status(content)
+        val timestamp = Timestamp()
+        val token = Token(token)
+        val version = Version()
+        val signature = Authorization(apiSecret, tokenSecret)
+            .createSignature(
+                status,
+                includeEntities,
+                consumerKey,
+                nonce,
+                signatureMethod,
+                timestamp,
+                token,
+                version
+            ).let(::Signature)
+
+        val httpUrl = Constants.API_URL_BASE.toHttpUrl().newBuilder()
+            .addEncodedQueryParameter("status", content)
+            .addEncodedQueryParameter("include_entities", true.toString())
+            .build()
+
+        val header = "OAuth " +
+            listOf(
+                consumerKey,
+                nonce,
+                signature,
+                signatureMethod,
+                timestamp,
+                token,
+                version
+            ).joinToString(", ") { it.toHeaderString() }
+
+        return Request.Builder()
+            .url(httpUrl)
+            .header("Authorization", header)
+            .post(EMPTY_REQUEST)
+            .build()
+            .let(OkHttpClient()::newCall)
+            .execute()
     }
 }

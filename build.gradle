@@ -34,6 +34,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jsoup/jsoup
     compile group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
 
+    // Use OkHttp
+    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.0'
+
     // Use the Kotlin test library.
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
 
