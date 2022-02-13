@@ -8,14 +8,19 @@ import io.github.t45k.ghcbonk.github.analyzeDocument
 import io.github.t45k.ghcbonk.twitter.TwitterClient
 import io.github.t45k.ghcbonk.twitter.tweetModel.SimpleTweetModel
 import io.github.t45k.ghcbonk.twitter.tweetModel.WordleLikeTweetModel
+import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.util.ResourceBundle
 
-class MyLambda : RequestHandler<Unit, String?> {
-    override fun handleRequest(input: Unit, context: Context?): String {
+class MyLambda : RequestHandler<Unit, Unit> {
+    companion object {
+        private val logger = LoggerFactory.getLogger(this::class.java)
+    }
+
+    override fun handleRequest(input: Unit, context: Context?) {
         val property: ResourceBundle = ResourceBundle.getBundle("info")
         val githubUserName = property.getString("userName")
-        val contributionCountsLast40days: List<ContributionCount> = GitHubUser(githubUserName)
+        val contributionCounts: List<ContributionCount> = GitHubUser(githubUserName)
             .fetchGitHubUserPage()
             .let(::analyzeDocument)
 
@@ -23,15 +28,22 @@ class MyLambda : RequestHandler<Unit, String?> {
         val simpleTweet = SimpleTweetModel(githubUserName)
         val wordleLikeTweet = WordleLikeTweetModel()
 
-        return TwitterClient(
+        val twitterClient = TwitterClient(
             property.getString("apiKey"),
             property.getString("apiSecret"),
             property.getString("token"),
             property.getString("tokenSecret")
         )
-            .run {
-                tweet(simpleTweet.getContent(today, contributionCountsLast40days)).toString() + "\n" +
-                    tweet(wordleLikeTweet.getContent(today, contributionCountsLast40days)).toString()
-            }
+        val response1 = twitterClient.tweet(simpleTweet.getContent(today, contributionCounts))
+        if (response1.code != 200) {
+            logger.warn("Failure for Simple Tweet")
+            logger.warn(response1.body?.string())
+        }
+
+        val response2 = twitterClient.tweet(wordleLikeTweet.getContent(today, contributionCounts))
+        if (response2.code != 200) {
+            logger.warn("Failure for Wordle-like Tweet")
+            logger.warn(response2.body?.string())
+        }
     }
 }

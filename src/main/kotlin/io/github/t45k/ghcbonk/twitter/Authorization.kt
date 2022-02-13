@@ -1,7 +1,6 @@
 package io.github.t45k.ghcbonk.twitter
 
 import io.github.t45k.ghcbonk.twitter.parameter.ConsumerKey
-import io.github.t45k.ghcbonk.twitter.parameter.IncludeEntities
 import io.github.t45k.ghcbonk.twitter.parameter.Nonce
 import io.github.t45k.ghcbonk.twitter.parameter.Parameter
 import io.github.t45k.ghcbonk.twitter.parameter.SignatureMethod
@@ -28,7 +27,6 @@ class Authorization(
 
     fun createSignature(
         status: Status,
-        includeEntities: IncludeEntities,
         consumerKey: ConsumerKey,
         nonce: Nonce,
         signatureMethod: SignatureMethod,
@@ -43,7 +41,6 @@ class Authorization(
             .add(
                 joinParams(
                     status,
-                    includeEntities,
                     consumerKey,
                     nonce,
                     signatureMethod,

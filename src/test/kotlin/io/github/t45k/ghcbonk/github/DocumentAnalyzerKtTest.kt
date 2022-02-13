@@ -12,7 +12,6 @@ internal class DocumentAnalyzerKtTest {
         val document = Jsoup.connect("https://github.com/T45K").get()
         val contributionCounts = analyzeDocument(document)
 
-        assertEquals(contributionCounts.count(), 40)
         assertEquals(contributionCounts.last().date, LocalDate.now())
         assertTrue(contributionCounts.last().count >= 0)
     }

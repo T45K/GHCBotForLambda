@@ -1,7 +1,6 @@
 package io.github.t45k.ghcbonk.twitter
 
 import io.github.t45k.ghcbonk.twitter.parameter.ConsumerKey
-import io.github.t45k.ghcbonk.twitter.parameter.IncludeEntities
 import io.github.t45k.ghcbonk.twitter.parameter.Nonce
 import io.github.t45k.ghcbonk.twitter.parameter.Signature
 import io.github.t45k.ghcbonk.twitter.parameter.SignatureMethod
@@ -10,6 +9,7 @@ import io.github.t45k.ghcbonk.twitter.parameter.Timestamp
 import io.github.t45k.ghcbonk.twitter.parameter.Token
 import io.github.t45k.ghcbonk.twitter.parameter.Version
 import io.github.t45k.ghcbonk.util.Constants
+import io.github.t45k.ghcbonk.util.StringMixin
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -21,11 +21,10 @@ class TwitterClient(
     private val apiSecret: String,
     private val token: String,
     private val tokenSecret: String
-) {
+) : StringMixin {
 
     fun tweet(content: String): Response {
         val consumerKey = ConsumerKey(apiKey)
-        val includeEntities = IncludeEntities()
         val nonce = Nonce()
         val signatureMethod = SignatureMethod()
         val status = Status(content)
@@ -35,7 +34,6 @@ class TwitterClient(
         val signature = Authorization(apiSecret, tokenSecret)
             .createSignature(
                 status,
-                includeEntities,
                 consumerKey,
                 nonce,
                 signatureMethod,
@@ -45,8 +43,7 @@ class TwitterClient(
             ).let(::Signature)
 
         val httpUrl = Constants.API_URL_BASE.toHttpUrl().newBuilder()
-            .addEncodedQueryParameter("status", content)
-            .addEncodedQueryParameter("include_entities", true.toString())
+            .addQueryParameter("status", content)
             .build()
 
         val header = "OAuth " +
