@@ -1,9 +1,9 @@
 package io.github.t45k.ghcbonk.github
 
 import org.jsoup.nodes.Document
+import java.time.LocalDate
 
-fun analyzeDocument(document: Document): Pair<Int, Int> =
+fun analyzeDocument(document: Document): List<ContributionCount> =
     document.select("rect[data-count]")
         .sortedBy { it.attr("data-date") }
-        .map { it.attr("data-count").toInt() }
-        .let { it.last() to it.takeLastWhile { count -> count > 0 }.count() }
+        .map { LocalDate.parse(it.attr("data-date")) to it.attr("data-count").toInt() }

@@ -2,29 +2,48 @@ package io.github.t45k.ghcbonk
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
+import io.github.t45k.ghcbonk.github.ContributionCount
 import io.github.t45k.ghcbonk.github.GitHubUser
 import io.github.t45k.ghcbonk.github.analyzeDocument
-import io.github.t45k.ghcbonk.twitter.TweetModel
 import io.github.t45k.ghcbonk.twitter.TwitterClient
+import io.github.t45k.ghcbonk.twitter.tweetModel.SimpleTweetModel
+import io.github.t45k.ghcbonk.twitter.tweetModel.WordleLikeTweetModel
+import io.github.t45k.ghcbonk.util.ResponseMixin
+import org.slf4j.LoggerFactory
+import java.time.LocalDate
 import java.util.ResourceBundle
 
-class MyLambda : RequestHandler<Unit, String?> {
-    override fun handleRequest(input: Unit, context: Context?): String? {
+class MyLambda : RequestHandler<Unit, Unit>, ResponseMixin {
+    companion object {
+        private val logger = LoggerFactory.getLogger(this::class.java)
+    }
+
+    override fun handleRequest(input: Unit, context: Context?) {
         val property: ResourceBundle = ResourceBundle.getBundle("info")
         val githubUserName = property.getString("userName")
-        val (lastContributionCount, contributionStreak) = GitHubUser(githubUserName)
+        val contributionCounts: List<ContributionCount> = GitHubUser(githubUserName)
             .fetchGitHubUserPage()
             .let(::analyzeDocument)
 
-        val tweet = TweetModel(githubUserName, lastContributionCount, contributionStreak)
-        return TwitterClient(
+        val today = LocalDate.now()
+
+        val twitterClient = TwitterClient(
             property.getString("apiKey"),
             property.getString("apiSecret"),
             property.getString("token"),
             property.getString("tokenSecret")
         )
-            .tweet(tweet.getContent())
-            .body
-            ?.toString()
+
+        val tweetModels = listOf(
+            SimpleTweetModel(githubUserName),
+            WordleLikeTweetModel()
+        )
+        for (tweetModel in tweetModels) {
+            val response = twitterClient.tweet(tweetModel.getContent(today, contributionCounts))
+            if (response.isFailure()) {
+                logger.warn("Failure for ${tweetModel.javaClass.simpleName}")
+                logger.warn(response.body?.string())
+            }
+        }
     }
 }

@@ -1,7 +1,6 @@
 package io.github.t45k.ghcbonk.twitter
 
 import io.github.t45k.ghcbonk.twitter.parameter.ConsumerKey
-import io.github.t45k.ghcbonk.twitter.parameter.IncludeEntities
 import io.github.t45k.ghcbonk.twitter.parameter.Nonce
 import io.github.t45k.ghcbonk.twitter.parameter.Parameter
 import io.github.t45k.ghcbonk.twitter.parameter.SignatureMethod
@@ -11,6 +10,7 @@ import io.github.t45k.ghcbonk.twitter.parameter.Token
 import io.github.t45k.ghcbonk.twitter.parameter.Version
 import io.github.t45k.ghcbonk.util.Constants
 import io.github.t45k.ghcbonk.util.StringMixin
+import java.time.LocalDate
 import java.util.Base64
 import java.util.StringJoiner
 import javax.crypto.Mac
@@ -27,7 +27,6 @@ class Authorization(
 
     fun createSignature(
         status: Status,
-        includeEntities: IncludeEntities,
         consumerKey: ConsumerKey,
         nonce: Nonce,
         signatureMethod: SignatureMethod,
@@ -35,13 +34,13 @@ class Authorization(
         token: Token,
         version: Version
     ): String {
+        LocalDate.now().dayOfWeek
         val signatureBase: String = StringJoiner("&")
             .add(HTTP_METHOD)
             .add(Constants.API_URL_BASE.percentEncode())
             .add(
-                join(
+                joinParams(
                     status,
-                    includeEntities,
                     consumerKey,
                     nonce,
                     signatureMethod,
@@ -55,16 +54,15 @@ class Authorization(
         val signingKey: String = listOf(
             consumerSecret,
             tokenSecret
-        )
-            .joinToString("&") { it.percentEncode() }
+        ).joinToString("&") { it.percentEncode() }
 
         return Mac.getInstance(DIGEST_ALGORITHM)
-            .also { it.init(SecretKeySpec(signingKey.toByteArray(), DIGEST_ALGORITHM)) }
+            .apply { init(SecretKeySpec(signingKey.toByteArray(), DIGEST_ALGORITHM)) }
             .doFinal(signatureBase.toByteArray())
             .let(Base64.getEncoder()::encodeToString)
     }
 
-    private fun join(vararg params: Parameter) =
+    private fun joinParams(vararg params: Parameter) =
         params
             .sortedBy { it.key() }
             .joinToString("&") { it.toSignatureBaseString() }

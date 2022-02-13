@@ -1,8 +1,10 @@
 package io.github.t45k.ghcbonk.twitter
 
 import java.util.ResourceBundle
+import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Ignore("Using real API")
 internal class TwitterClientTest {
 
     @Test
@@ -14,7 +16,7 @@ internal class TwitterClientTest {
             property.getString("token"),
             property.getString("tokenSecret")
         )
-            .tweet("Hello world via Twitter API")
+            .tweet("Hello\nworld\nvia\nTwitter")
             .let(::println)
     }
 }
