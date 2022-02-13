@@ -6,7 +6,7 @@
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.50'
 
     // Apply the application plugin to add support for building a CLI application.
     id 'application'
@@ -24,9 +24,6 @@ dependencies {
 
     // Use Logger
     compile 'ch.qos.logback:logback-classic:1.1.3'
-
-    // Use twitter4j
-    compile 'org.twitter4j:twitter4j-core:4.0.7'
 
     // Use lambda sdk
     compile group: 'com.amazonaws', name: 'aws-lambda-java-core', version: '1.2.0'

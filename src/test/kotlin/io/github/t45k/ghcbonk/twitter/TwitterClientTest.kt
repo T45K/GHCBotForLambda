@@ -1,8 +1,10 @@
 package io.github.t45k.ghcbonk.twitter
 
 import java.util.ResourceBundle
+import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Ignore("Using real API")
 internal class TwitterClientTest {
 
     @Test
