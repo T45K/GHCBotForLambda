@@ -64,6 +64,6 @@ class Authorization(
 
     private fun joinParams(vararg params: Parameter) =
         params
-            .sortedBy { it.key() }
+            .sortedBy { it.key }
             .joinToString("&") { it.toSignatureBaseString() }
 }

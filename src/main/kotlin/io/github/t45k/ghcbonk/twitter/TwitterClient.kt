@@ -10,11 +10,12 @@ import io.github.t45k.ghcbonk.twitter.parameter.Token
 import io.github.t45k.ghcbonk.twitter.parameter.Version
 import io.github.t45k.ghcbonk.util.Constants
 import io.github.t45k.ghcbonk.util.StringMixin
-import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.internal.EMPTY_REQUEST
+import io.ktor.client.HttpClient
+import io.ktor.client.request.header
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.url
+import kotlinx.coroutines.runBlocking
 
 class TwitterClient(
     private val apiKey: String,
@@ -23,7 +24,7 @@ class TwitterClient(
     private val tokenSecret: String
 ) : StringMixin {
 
-    fun tweet(content: String): Response {
+    fun tweet(content: String) {
         val consumerKey = ConsumerKey(apiKey)
         val nonce = Nonce()
         val signatureMethod = SignatureMethod()
@@ -42,10 +43,6 @@ class TwitterClient(
                 version
             ).let(::Signature)
 
-        val httpUrl = Constants.API_URL_BASE.toHttpUrl().newBuilder()
-            .addQueryParameter("status", content)
-            .build()
-
         val header = "OAuth " +
             listOf(
                 consumerKey,
@@ -57,12 +54,14 @@ class TwitterClient(
                 version
             ).joinToString(", ") { it.toHeaderString() }
 
-        return Request.Builder()
-            .url(httpUrl)
-            .header("Authorization", header)
-            .post(EMPTY_REQUEST)
-            .build()
-            .let(OkHttpClient()::newCall)
-            .execute()
+        runBlocking {
+            HttpClient().use {
+                it.post {
+                    header("Authorization", header)
+                    url(Constants.API_URL_BASE)
+                    parameter("status", content)
+                }
+            }
+        }
     }
 }
