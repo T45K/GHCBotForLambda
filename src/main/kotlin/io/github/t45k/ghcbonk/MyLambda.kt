@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.util.ResourceBundle
 
-class MyLambda : RequestHandler<Unit, Unit>{
+class MyLambda : RequestHandler<Unit, Unit> {
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
