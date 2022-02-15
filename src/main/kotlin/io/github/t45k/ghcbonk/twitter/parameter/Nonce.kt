@@ -4,9 +4,8 @@ import kotlin.random.Random
 
 class Nonce : Parameter(random.nextLong().toString()) {
     companion object {
-        private const val OAUTH_NONCE = "oauth_nonce"
         private val random = Random.Default
     }
 
-    override fun key(): String = OAUTH_NONCE
+    override val key: String = "oauth_nonce"
 }

@@ -3,8 +3,8 @@ package io.github.t45k.ghcbonk.twitter.parameter
 import io.github.t45k.ghcbonk.util.StringMixin
 
 abstract class Parameter(private val value: String) : StringMixin {
-    fun toSignatureBaseString() = "${key()}=${value.percentEncode()}"
-    fun toHeaderString() = "${key()}=\"${value.percentEncode()}\""
+    abstract val key: String
 
-    abstract fun key(): String
+    fun toSignatureBaseString() = "${this.key}=${value.percentEncode()}"
+    fun toHeaderString() = "${this.key}=\"${value.percentEncode()}\""
 }
