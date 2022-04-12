@@ -39,10 +39,14 @@ class MyLambda : RequestHandler<Unit, Unit> {
         )
         for (tweetModel in tweetModels) {
             try {
-                twitterClient.tweet(tweetModel.getContent(today, contributionCounts))
+                val response = twitterClient.tweet(tweetModel.getContent(today, contributionCounts))
+                if (response == null) {
+                    logger.warn("Response for ${tweetModel.javaClass.simpleName} is null")
+                } else if (!response.errors.isNullOrEmpty()) {
+                    logger.warn("Response for ${tweetModel.javaClass.simpleName} has the following errors\n${response.errors}")
+                }
             } catch (e: Exception) {
-                logger.warn("Failure for ${tweetModel.javaClass.simpleName}")
-                logger.warn(e.message)
+                logger.warn("Failure for ${tweetModel.javaClass.simpleName} due to exception", e)
             }
         }
     }
