@@ -8,7 +8,7 @@ private const val DATE_ATTR_NAME = "data-date"
 
 fun analyzeDocument(document: Document): List<ContributionCount> =
     document.select(".$CONTRIBUTION_CALENDAR_CSS_NAME")
-        .filter { it.hasAttr(DATE_ATTR_NAME) }
+        .filter { element -> element.hasAttr(DATE_ATTR_NAME) }
         .sortedBy { it.attr(DATE_ATTR_NAME) }
         .map { LocalDate.parse(it.attr(DATE_ATTR_NAME)) to parseCalendarMessage(it.text()) }
 
