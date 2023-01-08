@@ -13,6 +13,9 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
+compileKotlin.kotlinOptions.jvmTarget = '11'
+compileTestKotlin.kotlinOptions.jvmTarget = '11'
+
 repositories {
     // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
