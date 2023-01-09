@@ -10,16 +10,14 @@ import io.github.t45k.ghcbonk.twitter.tweetModel.SimpleTweetModel
 import io.github.t45k.ghcbonk.twitter.tweetModel.WordleLikeTweetModel
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
-import java.util.ResourceBundle
 
 class MyLambda : RequestHandler<Unit, Unit> {
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    override fun handleRequest(input: Unit, context: Context?) {
-        val property: ResourceBundle = ResourceBundle.getBundle("info")
-        val githubUserName = property.getString("userName")
+    override fun handleRequest(input: Unit, context: Context) {
+        val githubUserName = System.getenv("username")
         val contributionCounts: List<ContributionCount> = GitHubUser(githubUserName)
             .fetchGitHubUserPage()
             .let(::analyzeDocument)
@@ -27,10 +25,10 @@ class MyLambda : RequestHandler<Unit, Unit> {
         val today = LocalDate.now()
 
         val twitterClient = TwitterClient(
-            property.getString("apiKey"),
-            property.getString("apiSecret"),
-            property.getString("token"),
-            property.getString("tokenSecret")
+            System.getenv("apiKey"),
+            System.getenv("apiSecret"),
+            System.getenv("token"),
+            System.getenv("tokenSecret")
         )
 
         val tweetModels = listOf(

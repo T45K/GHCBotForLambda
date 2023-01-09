@@ -1,7 +1,8 @@
 package io.github.t45k.ghcbonk.github
 
 import org.jsoup.Jsoup
-import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -12,7 +13,8 @@ internal class DocumentAnalyzerKtTest {
         val document = Jsoup.connect("https://github.com/T45K").get()
         val contributionCounts = analyzeDocument(document)
 
-        assertEquals(contributionCounts.last().date, LocalDate.now())
+        val todayOnUTC = ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC).toLocalDate()
+        assertEquals(contributionCounts.last().date, todayOnUTC)
         assertTrue(contributionCounts.last().count >= 0)
     }
 }
