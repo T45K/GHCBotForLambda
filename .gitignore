@@ -28,7 +28,7 @@ Thumbs.db
 .DS_Store
 
 # Gradle
-!build.gradle
+!build.gradle.kts
 !gradle-wrapper.jar
 
 # Maven
@@ -42,3 +42,6 @@ bin
 *.log
 *.swp
 *.bak
+
+# jEnv
+.java-version
