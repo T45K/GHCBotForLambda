@@ -14,6 +14,7 @@ internal class DocumentAnalyzerKtTest {
         val contributionCounts = analyzeDocument(document)
 
         val todayOnUTC = ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC).toLocalDate()
+        assertTrue(contributionCounts.isNotEmpty())
         assertEquals(contributionCounts.last().date, todayOnUTC)
         assertTrue(contributionCounts.last().count >= 0)
     }
