@@ -3,8 +3,8 @@ package io.github.t45k.ghcbonk
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
 import io.github.t45k.ghcbonk.github.ContributionCount
+import io.github.t45k.ghcbonk.github.GitHubClient
 import io.github.t45k.ghcbonk.github.GitHubUser
-import io.github.t45k.ghcbonk.github.analyzeDocument
 import io.github.t45k.ghcbonk.twitter.TwitterClient
 import io.github.t45k.ghcbonk.twitter.tweetModel.SimpleTweetModel
 import io.github.t45k.ghcbonk.twitter.tweetModel.WordleLikeTweetModel
@@ -22,9 +22,13 @@ class MyLambda : RequestHandler<Unit, Unit> {
             logger.error("Failed to get username from environment variables. Have you set it?")
             return
         }
-        val contributionCounts: List<ContributionCount> = GitHubUser(githubUserName)
-            .fetchGitHubUserPage()
-            .let(::analyzeDocument)
+        val githubUser = GitHubUser(githubUserName)
+        val githubAccessToken = System.getenv("GITHUB_PERSONAL_ACCESS_TOKEN") ?: run {
+            logger.error("Failed to get GitHub personal access token from environment variables. Have you set it?")
+            return
+        }
+        val gitHubClient = GitHubClient(githubAccessToken)
+        val contributionCounts: List<ContributionCount> = gitHubClient.fetchContributionCounts(githubUser)
 
         val today = LocalDate.now()
 
@@ -35,7 +39,7 @@ class MyLambda : RequestHandler<Unit, Unit> {
                 System.getenv("token"),
                 System.getenv("tokenSecret")
             )
-        } catch (e: NullPointerException) {
+        } catch (_: NullPointerException) {
             logger.error("Failed to get apiKey, apiSecret, token or tokenSecret. Have you set them?")
             return
         }
