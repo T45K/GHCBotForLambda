@@ -5,15 +5,12 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven { setUrl("https://jitpack.io") }
 }
 
 dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("com.amazonaws:aws-lambda-java-core:1.2.3")
     implementation("com.twitter:twitter-api-java-sdk:1.1.4") // after this version, we can no longer use TwitterCredentialsOAuth1
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.12")
-    implementation("com.github.ProjectMapK:jackson-module-kogera:2.17.0-beta12")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
