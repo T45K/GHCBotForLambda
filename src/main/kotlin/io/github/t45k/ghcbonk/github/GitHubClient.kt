@@ -1,10 +1,9 @@
 package io.github.t45k.ghcbonk.github
 
-import io.github.projectmapk.jackson.module.kogera.jacksonObjectMapper
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import java.time.LocalDate
 
 class GitHubClient(private val personalAccessToken: String) {
@@ -12,13 +11,10 @@ class GitHubClient(private val personalAccessToken: String) {
         private const val URL = "https://api.github.com/graphql"
     }
 
-    private val okHttpClient = OkHttpClient()
-    private val objectMapper = jacksonObjectMapper()
-
     fun fetchContributionCounts(user: GitHubUser): List<ContributionCount> {
         val graphQLQuery = """
             {
-              user(login: "${user.name}"){
+              user(login: \"${user.name}\") {
                 contributionsCollection {
                   contributionCalendar {
                     weeks {
@@ -31,28 +27,26 @@ class GitHubClient(private val personalAccessToken: String) {
                 }
               }
             }
-        """.trimIndent()
+        """.replace("\n", " ")
+        val requestBody = """{"query": "$graphQLQuery"}"""
 
-        val requestBody = objectMapper.writeValueAsString(mapOf("query" to graphQLQuery))
-            .toRequestBody("application/json".toMediaType())
-        val request = Request.Builder()
-            .url(URL)
-            .header("Authorization", "Bearer $personalAccessToken")
-            .post(requestBody)
-            .build()
+        val responseBody = HttpClient.newHttpClient().use { httpClient ->
+            httpClient.send(
+                HttpRequest.newBuilder(URI.create(URL))
+                    .header("Authorization", "Bearer $personalAccessToken")
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build(),
+                HttpResponse.BodyHandlers.ofString()
+            ).body()
+        }!!
 
-        return okHttpClient.newCall(request)
-            .execute()
-            .body
-            .string()
-            .let(objectMapper::readTree)["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
-            .flatMap { weeks ->
-                weeks["contributionDays"].map {
-                    ContributionCount(
-                        LocalDate.parse(it["date"].textValue()),
-                        it["contributionCount"].numberValue().toInt()
-                    )
-                }
-            }
+        return """"contributionCount":(\d+),"date":"(\d{4}-\d{2}-\d{2})"""".toRegex()
+            .findAll(responseBody)
+            .map { matchResult ->
+                ContributionCount(
+                    LocalDate.parse(matchResult.groups[2]!!.value),
+                    matchResult.groups[1]!!.value.toInt()
+                )
+            }.toList()
     }
 }
