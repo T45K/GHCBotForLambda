@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("ch.qos.logback:logback-classic:1.5.3")
     implementation("com.amazonaws:aws-lambda-java-core:1.2.3")
     implementation("com.twitter:twitter-api-java-sdk:1.1.4") // after this version, we can no longer use TwitterCredentialsOAuth1
 
