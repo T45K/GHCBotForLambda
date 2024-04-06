@@ -1,7 +1,5 @@
 package io.github.t45k.ghcbonk.github
 
-import java.time.LocalDate
+import io.github.t45k.ghcbonk.util.JstDate
 
-data class ContributionCount(val date: LocalDate, val count: Int)
-
-infix fun LocalDate.to(count: Int): ContributionCount = ContributionCount(this, count)
+data class ContributionCount(val date: JstDate, val count: Int)

@@ -8,9 +8,8 @@ import io.github.t45k.ghcbonk.github.GitHubUser
 import io.github.t45k.ghcbonk.twitter.TwitterClient
 import io.github.t45k.ghcbonk.twitter.tweetModel.SimpleTweetModel
 import io.github.t45k.ghcbonk.twitter.tweetModel.WordleLikeTweetModel
+import io.github.t45k.ghcbonk.util.JstDate
 import org.slf4j.LoggerFactory
-import java.lang.NullPointerException
-import java.time.LocalDate
 
 class MyLambda : RequestHandler<Unit, Unit> {
     companion object {
@@ -30,7 +29,7 @@ class MyLambda : RequestHandler<Unit, Unit> {
         val gitHubClient = GitHubClient(githubAccessToken)
         val contributionCounts: List<ContributionCount> = gitHubClient.fetchContributionCounts(githubUser)
 
-        val today = LocalDate.now()
+        val yesterday = JstDate.now() - 1
 
         val twitterClient = try {
             TwitterClient(
@@ -50,7 +49,7 @@ class MyLambda : RequestHandler<Unit, Unit> {
         )
         for (tweetModel in tweetModels) {
             try {
-                val response = twitterClient.tweet(tweetModel.getContent(today, contributionCounts))
+                val response = twitterClient.tweet(tweetModel.getContent(yesterday, contributionCounts))
                 if (response == null) {
                     logger.warn("Response for ${tweetModel.javaClass.simpleName} is null")
                 } else if (!response.errors.isNullOrEmpty()) {

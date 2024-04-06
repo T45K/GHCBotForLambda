@@ -1,8 +1,8 @@
 package io.github.t45k.ghcbonk.twitter.tweetModel
 
 import io.github.t45k.ghcbonk.github.ContributionCount
-import java.time.LocalDate
+import io.github.t45k.ghcbonk.util.JstDate
 
 interface TweetModel {
-    fun getContent(today: LocalDate, contributionCounts: List<ContributionCount>): String
+    fun getContent(yesterday: JstDate, contributionCounts: List<ContributionCount>): String
 }
