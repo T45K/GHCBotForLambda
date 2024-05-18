@@ -17,7 +17,7 @@ data class JstDate private constructor(private val value: ZonedDateTime) : Compa
         fun of(year: Int, month: Int, dayOfMonth: Int): JstDate =
             JstDate(ZonedDateTime.of(year, month, dayOfMonth, 0, 0, 0, 0, jst))
 
-        fun now(): JstDate = JstDate(ZonedDateTime.now())
+        fun now(): JstDate = from(ZonedDateTime.now())
     }
 
     operator fun minus(days: Long): JstDate = JstDate(value.minusDays(days))
