@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.0.0-Beta5"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    kotlin("jvm") version "2.3.0-Beta2"
+    id("com.github.johnrengelman.shadow") version "9.2.2"
 }
 
 repositories {
@@ -8,9 +8,11 @@ repositories {
 }
 
 dependencies {
-    implementation("ch.qos.logback:logback-classic:1.4.12")
+    implementation("ch.qos.logback:logback-classic:1.5.13")
     implementation("com.amazonaws:aws-lambda-java-core:1.2.3")
-    implementation("com.twitter:twitter-api-java-sdk:1.1.4") // after this version, we can no longer use TwitterCredentialsOAuth1
+
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
