@@ -50,13 +50,11 @@ class MyLambda : RequestHandler<Unit, Unit> {
         for (tweetModel in tweetModels) {
             try {
                 val response = twitterClient.tweet(tweetModel.getContent(yesterday, contributionCounts))
-                if (response == null) {
-                    logger.warn("Response for ${tweetModel.javaClass.simpleName} is null")
-                } else if (!response.errors.isNullOrEmpty()) {
-                    logger.warn("Response for ${tweetModel.javaClass.simpleName} has the following errors\n${response.errors}")
+                if (!response.isSuccessful) {
+                    logger.error("Response for ${tweetModel.javaClass.simpleName} has the following errors\n${response.body!!.string()}")
                 }
             } catch (e: Exception) {
-                logger.warn("Failed to send ${tweetModel.javaClass.simpleName} due to exception", e)
+                logger.error("Failed to send ${tweetModel.javaClass.simpleName} due to exception", e)
             }
         }
     }
